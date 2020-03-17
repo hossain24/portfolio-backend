@@ -33,6 +33,16 @@ app.post('/upload', (req, res, next) => {
   });
 });
 
+app.get('/api/users', (req, res, next) => {
+  const users = [
+    { id: 1, firstName: "John", lastName: "Snow" },
+    { id: 2, firstName: "Jason", lastName: "Hopkin" },
+    { id: 3, firstName: "Jonson", lastName: "Kim" }
+  ];
+
+  res.json(users);
+});
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
