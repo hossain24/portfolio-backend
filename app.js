@@ -4,6 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var mongoose = require('mongoose');
+var User = require('./models/user-data');
+
 var cors = require('cors');
 var fileUpload = require('express-fileupload');
 
@@ -11,13 +14,18 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var app = express();
 
-// Use CORS and File Upload modules here
+// cors and file upload module
 app.use(cors({ credentials: true }));
 app.use(fileUpload());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
+// database setup
+const db = mongoose.connect('mongodb://hossain:hossain24@ds141654.mlab.com:41654/webshop', () => {
+  console.log('Database is connected');
+});
 
 app.post('/upload', (req, res, next) => {
   // console.log(req);
@@ -42,6 +50,13 @@ app.get('/api/users', (req, res, next) => {
 
   res.json(users);
 });
+
+app.get('/db/users', (req, res, next) => {
+  User.find((err, data) => {
+    if (err) return res.json({ success: false, err: error });
+    return res.json({ success: true, data: data });
+  });
+})
 
 app.use(logger('dev'));
 app.use(express.json());
