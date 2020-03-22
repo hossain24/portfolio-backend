@@ -1,18 +1,15 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var mongoose = require('mongoose');
-var User = require('./models/user-data');
+const mongoose = require('mongoose');
 
-var cors = require('cors');
-var fileUpload = require('express-fileupload');
+const cors = require('cors');
+const fileUpload = require('express-fileupload');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var app = express();
+const app = express();
 
 // cors and file upload module
 app.use(cors({ credentials: true }));
@@ -22,51 +19,26 @@ app.use(fileUpload());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// database setup
+// database connection setup
 const db = mongoose.connect('mongodb://hossain:hossain24@ds141654.mlab.com:41654/webshop', () => {
   console.log('Database is connected');
 });
 
-app.post('/upload', (req, res, next) => {
-  // console.log(req);
-  let imageFile = req.files.file;
+// router setup
+const testRouter = require('./routes/hard-coded');
+const usersRouter = require('./routes/users-db');
+const uploadRouter = require('./routes/upload-image');
 
-  imageFile.mv(`${__dirname}/public/${req.body.filename}.jpg`, err => {
-    if (err) {
-      return res.status(500).send(err);
-    }
-
-    res.json({ file: `public/${req.body.filename}.jpg` });
-    console.log(res.json);
-  });
-});
-
-app.get('/api/users', (req, res, next) => {
-  const users = [
-    { id: 1, firstName: "John", lastName: "Snow" },
-    { id: 2, firstName: "Jason", lastName: "Hopkin" },
-    { id: 3, firstName: "Jonson", lastName: "Kim" }
-  ];
-
-  res.json(users);
-});
-
-app.get('/db/users', (req, res, next) => {
-  User.find((err, data) => {
-    if (err) return res.json({ success: false, err: error });
-    return res.json({ success: true, data: data });
-  });
-})
+app.use('/hard-coded', testRouter);
+app.use('/users-db', usersRouter);
+app.use('/upload-image', uploadRouter);
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-// app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use('/public', express.static(__dirname + '/public'));
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
