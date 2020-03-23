@@ -3,13 +3,16 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+require('dotenv/config');
 
 const cors = require('cors');
 const fileUpload = require('express-fileupload');
 
 const app = express();
+
+app.use(bodyParser.json());
 
 // cors and file upload module
 app.use(cors({ credentials: true }));
@@ -20,14 +23,15 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 // database connection setup
-const db = mongoose.connect('mongodb://hossain:hossain24@ds141654.mlab.com:41654/webshop', () => {
-  console.log('Database is connected');
-});
+const db = mongoose.connect(process.env.DB_URI,
+  { useNewUrlParser: true }, () => {
+    console.log('Database is connected');
+  });
 
 // router setup
-const testRouter = require('./routes/hard-coded');
-const usersRouter = require('./routes/users-db');
-const uploadRouter = require('./routes/upload-image');
+const testRouter = require('./routes/hard-coded-route');
+const usersRouter = require('./routes/users-route');
+const uploadRouter = require('./routes/upload-image-route');
 
 app.use('/hard-coded', testRouter);
 app.use('/users-db', usersRouter);
