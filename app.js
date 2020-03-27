@@ -23,19 +23,24 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 // database connection setup
-const db = mongoose.connect(process.env.DB_URI,
-  { useNewUrlParser: true }, () => {
-    console.log('Database is connected');
-  });
+const uri = process.env.DB_URI;
+mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true }
+);
+const connection = mongoose.connection;
+connection.once('open', () => {
+  console.log("MongoDB database connection established successfully");
+})
 
 // router setup
 const testRouter = require('./routes/hard-coded-route');
 const usersRouter = require('./routes/users-route');
 const uploadRouter = require('./routes/upload-image-route');
+const videosRouter = require('./routes/youtube-api-route');
 
 app.use('/hard-coded', testRouter);
 app.use('/users-db', usersRouter);
 app.use('/upload-image', uploadRouter);
+app.use('/youtube-videos', videosRouter);
 
 app.use(logger('dev'));
 app.use(express.json());

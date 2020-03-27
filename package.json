@@ -13,6 +13,8 @@
     "dotenv": "^8.2.0",
     "express": "~4.16.1",
     "express-fileupload": "^1.1.6",
+    "google-auth-library": "^6.0.0",
+    "googleapis": "^48.0.0",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "mongoose": "^5.9.5",
