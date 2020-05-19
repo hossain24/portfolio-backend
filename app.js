@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const passport = require("passport");
 require('dotenv/config');
 
 const cors = require('cors');
@@ -14,15 +15,15 @@ const app = express();
 
 app.use(bodyParser.json());
 
-// cors and file upload module
+// Cors and file upload module
 app.use(cors({ credentials: true }));
 app.use(fileUpload());
 
-// view engine setup
+// View engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// database connection setup
+// Database connection setup
 const uri = process.env.DB_URI;
 mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true }
 );
@@ -31,16 +32,23 @@ connection.once('open', () => {
   console.log("MongoDB database connection established successfully");
 })
 
-// router setup
+// Router setup
 const testRouter = require('./routes/hard-coded-route');
 const usersRouter = require('./routes/users-route');
 const uploadRouter = require('./routes/upload-image-route');
 const videosRouter = require('./routes/youtube-api-route');
+const memberRouter = require('./routes/members-route');
 
 app.use('/hard-coded', testRouter);
 app.use('/users-db', usersRouter);
 app.use('/upload-image', uploadRouter);
 app.use('/youtube-videos', videosRouter);
+app.use('/members', memberRouter);
+
+// Passport middleware
+app.use(passport.initialize());
+// Passport config
+require("./config/passport")(passport);
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -49,18 +57,18 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/public', express.static(__dirname + '/public'));
 
-// catch 404 and forward to error handler
+// Catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
 
-// error handler
+// Error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
+  // Render the error page
   res.status(err.status || 500);
   res.render('error');
 });
