@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const passport = require("passport");
+// const passport = require("passport");
 require('dotenv/config');
 
 const cors = require('cors');
@@ -37,18 +37,20 @@ const testRouter = require('./routes/hard-coded-route');
 const usersRouter = require('./routes/users-route');
 const uploadRouter = require('./routes/upload-image-route');
 const videosRouter = require('./routes/youtube-api-route');
-const memberRouter = require('./routes/members-route');
+//const memberRouter = require('./routes/members-route');
 
 app.use('/hard-coded', testRouter);
 app.use('/users-db', usersRouter);
 app.use('/upload-image', uploadRouter);
 app.use('/youtube-videos', videosRouter);
-app.use('/members', memberRouter);
+//app.use('/members', memberRouter);
 
+/*
 // Passport middleware
 app.use(passport.initialize());
 // Passport config
-require("./config/passport")(passport);
+require("./config/passport")(passport); 
+*/
 
 app.use(logger('dev'));
 app.use(express.json());
